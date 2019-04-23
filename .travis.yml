@@ -15,8 +15,6 @@ jobs:
       name: "MBS Deploy to Heroku"
       before_install:
         - docker build -t mbscode/docker-react -f Dockerfile .
-      script:
-        - docker run mbscode/docker-react
       deploy:
         on:
           branch: master

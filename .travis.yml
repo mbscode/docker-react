@@ -1,15 +1,26 @@
 sudo: required
+
 services:
   - docker
-before_install:
-  - docker build -t mbscode/docker-react -f Dockerfile.dev .
-script:
-  - docker run mbscode/docker-react npm run test -- --coverage
-  
-deploy:
-  on:
-    branch: master
-  provider: heroku
-  app: mbscode-docker-react
-  api_key:
-    secure: A92Y+BCo4pfWfb2i/mnf4KPtjG9HCmk+Ph8y8kVMWPiP4zhMgWlHPWrYgQKHBaFnIDKairPEnWQb2CCZAcr6b/2LZN8NugBAcGoHdvuSNyB5S3oZSLj/3MlmpbdHYXJALJq7LR2uMOlxJ13EYAtMkbbTyenL/rVe6g7UowFaN6tVvDkjsX5vamoH/diYsAz1K58QAEmo84ocBlBBggztDZSiedls+2R0C7Q8KVRw7CyZHyrK9sUKF5aJ1h43RJlFPK7I55EQOA3qVQ46lYetYszf25u9go06+tMtWx6jnZdYR+cy8v3MbUn1e+Xxs7lqmHLDxCBXXl3fYS55OSsAVWXGvDwv+O8bcg2QifF0Qp5a2X42zOqtLOjdqfn6EcDcKTmoPZcxjJjZQrk7riAVI8fk36ObP/W3AwExMi1+eedikE66984/jamlfVFzVJZPNdySyjPjX2JBPrsv3F485jy7bi7ufNxXfpNjlqcOdFDZCMG1gk/xXT+0tftTFWBZEib2pxsGwaglhfbLb6elRgPNkXyK90sT0ow2TxOUyBZXdigSKWiGvwoFsvB6HYaqKLsWLRp/3Oz8bEjhYytN+/DUXpdErHP99+CLrkqLR/4I2BxrpZoyy6P9NU5KwK8JodrA/+rFKjcESSyZBmMY++UoTptSWM3H4NmuBF8hxgc=
+
+jobs:
+  include:
+    - stage: "Test"
+      name: "MBS Simple Test"
+      before_install:
+        - docker build -t mbscode/docker-react:dev -f Dockerfile.dev .
+      script:
+        - docker run mbscode/docker-react:dev npm run test -- --coverage
+    - stage: "Deploy"
+      name: "MBS Deploy to Heroku"
+      before_install:
+        - docker build -t mbscode/docker-react -f Dockerfile .
+      script:
+        - docker run mbscode/docker-react
+      deploy:
+        on:
+          branch: master
+        provider: heroku
+        app: mbscode-docker-react
+        api_key:
+          secure: A92Y+BCo4pfWfb2i/mnf4KPtjG9HCmk+Ph8y8kVMWPiP4zhMgWlHPWrYgQKHBaFnIDKairPEnWQb2CCZAcr6b/2LZN8NugBAcGoHdvuSNyB5S3oZSLj/3MlmpbdHYXJALJq7LR2uMOlxJ13EYAtMkbbTyenL/rVe6g7UowFaN6tVvDkjsX5vamoH/diYsAz1K58QAEmo84ocBlBBggztDZSiedls+2R0C7Q8KVRw7CyZHyrK9sUKF5aJ1h43RJlFPK7I55EQOA3qVQ46lYetYszf25u9go06+tMtWx6jnZdYR+cy8v3MbUn1e+Xxs7lqmHLDxCBXXl3fYS55OSsAVWXGvDwv+O8bcg2QifF0Qp5a2X42zOqtLOjdqfn6EcDcKTmoPZcxjJjZQrk7riAVI8fk36ObP/W3AwExMi1+eedikE66984/jamlfVFzVJZPNdySyjPjX2JBPrsv3F485jy7bi7ufNxXfpNjlqcOdFDZCMG1gk/xXT+0tftTFWBZEib2pxsGwaglhfbLb6elRgPNkXyK90sT0ow2TxOUyBZXdigSKWiGvwoFsvB6HYaqKLsWLRp/3Oz8bEjhYytN+/DUXpdErHP99+CLrkqLR/4I2BxrpZoyy6P9NU5KwK8JodrA/+rFKjcESSyZBmMY++UoTptSWM3H4NmuBF8hxgc=
